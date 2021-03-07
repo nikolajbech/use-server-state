@@ -12,10 +12,16 @@ const useServerState = new UseServerState(8000, getUid) // port, method to get u
 Keys can be added:
 
 ```javascript
-useServerState.addKey('test_key',
+useServerState.addKey(
+  // Unique key:
+  'test_key',
+
+  // Getter:
   (uid) => {
     return db[uid].test_key || null
   },
+  
+  // Setter:
   (uid, value) => {
     db[uid].test_key = value
     return db[uid].test_key || null
