@@ -1,0 +1,9 @@
+{
+  "name": "use-server-state",
+  "version": "1.0.0",
+  "description": "Use-server-state is a realtime key/value communication tool between client and server",
+  "main": "index.js",
+  "repository": "https://github.com/nikolajbech/use-server-state.git",
+  "author": "Nikolaj Bech Andersen",
+  "license": "MIT"
+}
