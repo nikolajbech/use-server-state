@@ -26,15 +26,11 @@ class UseServerState {
     })
   }
 
-  addGetter(key, func) {
+  add(key, getFunc, setFunc) {
     if(key === undefined) return
-    getters[key] = func
+    getters[key] = getFunc
+    setters[key] = setFunc
     console.log('Added getter:', key)
-  }
-
-  addSetter(key, func) {
-    if(key === undefined) return
-    setters[key] = func
     console.log('Added setter:', key)
   }
 
@@ -52,6 +48,7 @@ class UseServerState {
       ws.verified = false
       this.handleClose(ws)
       this.handleMessage(ws)
+      console.log("New session with ID", ws.sessionId)
       sessions[ws.sessionId] = { ws }
     })
   }
@@ -72,6 +69,8 @@ class UseServerState {
         }
         if (message.type === 'VERIFY_USER') this.handleVerify(ws, message.jwt)
         const uid = await this.getUid(message.jwt)
+        ws.id = uid
+        console.log("Got", message, "from", uid)
         if (uid) {
           if (message.type === 'SET') this.handleSet(uid, message.key, message.value)
           if (message.type === 'GET') this.handleGet(uid, message.key)
@@ -94,7 +93,9 @@ class UseServerState {
   }
 
   async handleVerify(ws, jwt) {
+    console.log("Verifying user with token", jwt)
     const uid = await this.getUid(jwt)
+    console.log("Got UID", uid)
     if (uid) {
       ws.id = uid
       ws.verified = true
@@ -118,7 +119,10 @@ class UseServerState {
 
   reply(uid, message) {
     const matchedSessions = Object.values(sessions).filter(session => session.ws.id === uid)
+    console.log("Number of matched sessions", matchedSessions.length)
+    console.log("Sending message", message, "to", uid)
     matchedSessions.map(session => {
+      console.log(session.ws.id)
       session.ws.send(JSON.stringify(message))
     })
   }
@@ -133,7 +137,9 @@ class UseServerState {
       if(jwt === 'no_init') return res.send(null)
       const key = req.query.key
       const uid = await this.getUid(jwt)
+      ws.id = uid
       if(key === 'undefined') return res.send(null)
+      console.log("get", key, "from user", uid)
       const val = getters[key](uid)
       const answer = {}
       answer[key] = val
