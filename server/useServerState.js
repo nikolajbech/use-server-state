@@ -137,7 +137,6 @@ class UseServerState {
       if(jwt === 'no_init') return res.send(null)
       const key = req.query.key
       const uid = await this.getUid(jwt)
-      ws.id = uid
       if(key === 'undefined') return res.send(null)
       console.log("get", key, "from user", uid)
       const val = getters[key](uid)
