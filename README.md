@@ -6,7 +6,7 @@
 The server is initialized be creating a UseServerState object:
 
 ```javascript
-const useServerState = new UseServerState(8000, getUid) // port, method to get uid from jwt
+const useServerState = new UseServerState(8000, getUid)
 ```
 
 Keys can be added:
@@ -31,16 +31,18 @@ useServerState.addKey(
 
 ## client
 
-The client is initialized at a top-level by creating a UseServerStateClient object:
+The client is initialized be wrapping your app in UseServerStateProvider with the endpoint and port:
 
 ```javascript
-const serverState = new UseServerStateClient('localhost', '8000')
+<UseServerStateProvider endpoint="localhost" port="8000">
+  <App />
+</UseServerStateProvider>
 ```
 
 State can be added:
 
 ```javascript
-const [test, setTest] = useServerState('test_key')
+const [test, setTest] = useServerState('test_key', jwt)
 ```
 
 When `setTest` is called with a new value, the value is saved on the server and all active sessions with the same userID will receive the new value.
